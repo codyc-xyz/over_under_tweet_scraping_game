@@ -1,4 +1,5 @@
 import tweepy
+
 import configparser
 import pandas as pd
 
@@ -11,18 +12,13 @@ access_token = config['twitter']['access_token']
 access_token_secret = config['twitter']['access_token_secret']
 bearer_token = config['twitter']['bearer_token']
 
-client = tweepy.Client(bearer_token)
+streaming_client = tweepy.StreamingClient(bearer_token)
 auth = tweepy.OAuth2AppHandler(api_key, api_key_secret)
 api = tweepy.API(auth)
 
-response = client.search_recent_tweets("Tweepy")
-
-print(response.meta)
-
-tweets = response.data
-
-for tweet in tweets:
-    print(tweet.id)
+class TweetPrinter(tweepy.StreamingClient):
+  def on_tweet(self, tweet):
     print(tweet.text)
 
-response = client.search_recent_tweets('tweepy')
+printer = TweetPrinter(bearer_token)
+printer.sample()
