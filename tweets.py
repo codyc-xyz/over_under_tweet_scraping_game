@@ -16,13 +16,18 @@ auth = tweepy.OAuth2AppHandler(api_key, api_key_secret)
 api = tweepy.API(auth)
 
 class TweetPrinter(tweepy.StreamingClient):
-  columns = ['Time', 'Tweet']
-  data = []
+  def __init__(self):
+      self.columns = ['Time', 'Tweet']
+      self.data = []
   
   def on_tweet(self, tweet):
-    self.data.append(tweet.created_at, tweet.text)
-  df = pd.DataFrame(data, columns=columns)
-  df.to_csv('tweets.csv')
+      self.data.append(tweet.created_at, tweet.text)
+
+  def on_error(self, status):
+      print(status)
 
 printer = TweetPrinter(bearer_token)
 printer.sample()
+
+df = pd.DataFrame(printer.data, columns=printer.columns)
+df.to_csv('tweets.csv')
