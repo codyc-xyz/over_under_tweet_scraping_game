@@ -1,5 +1,4 @@
 import tweepy
-
 import configparser
 import pandas as pd
 
@@ -17,8 +16,13 @@ auth = tweepy.OAuth2AppHandler(api_key, api_key_secret)
 api = tweepy.API(auth)
 
 class TweetPrinter(tweepy.StreamingClient):
+  columns = ['Time', 'Tweet']
+  data = []
+  
   def on_tweet(self, tweet):
-    print(tweet.text)
+    self.data.append(tweet.created_at, tweet.text)
+  df = pd.DataFrame(data, columns=columns)
+  df.to_csv('tweets.csv')
 
 printer = TweetPrinter(bearer_token)
 printer.sample()
