@@ -16,6 +16,7 @@ streaming_client = tweepy.StreamingClient(bearer_token)
 auth = tweepy.OAuth2AppHandler(api_key, api_key_secret)
 api = tweepy.API(auth)
 
+
 class TweetPrinter(tweepy.StreamingClient):
     def __init__(self, bearer_token):
         super().__init__(bearer_token)
@@ -29,8 +30,10 @@ class TweetPrinter(tweepy.StreamingClient):
     def on_error(self, status):
         print(status)
 
+
 printer = TweetPrinter(bearer_token)
-printer.filter(track=["#"])
+printer.add_rules(tweepy.StreamRule('#'))
+printer.filter()
 time.sleep(5) 
 printer.disconnect()
 
