@@ -18,7 +18,6 @@ auth = tweepy.OAuth2AppHandler(api_key, api_key_secret)
 api = tweepy.API(auth)
 
 
-
 class TweetPrinter(tweepy.StreamingClient):
     def __init__(self, bearer_token):
         super().__init__(bearer_token)
@@ -27,19 +26,19 @@ class TweetPrinter(tweepy.StreamingClient):
     
     def on_data(self, data):
         json_data = json.loads(data)
-        print(json_data)
-        if 'text' in json_data:
-            self.data.append((json_data['text']))
+        if '#' in json_data['data']['text']:
+            self.data.append((json_data['data']['text']))
 
     def on_error(self, status):
         print(status)
 
 
 printer = TweetPrinter(bearer_token)
-rule = tweepy.StreamRule("#sports")
+
+rule = tweepy.StreamRule("has:hashtag")
 printer.add_rules(rule)
-printer.filter()
-time.sleep(5) 
+printer.sample()
+time.sleep(10) 
 printer.disconnect()
 
 df = pd.DataFrame(printer.data, columns=printer.columns)
