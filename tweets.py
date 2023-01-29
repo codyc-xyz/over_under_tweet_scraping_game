@@ -2,6 +2,7 @@ import tweepy
 import configparser
 import pandas as pd
 import json
+import time
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -17,22 +18,26 @@ auth = tweepy.OAuth2AppHandler(api_key, api_key_secret)
 api = tweepy.API(auth)
 
 
+
 class TweetPrinter(tweepy.StreamingClient):
     def __init__(self, bearer_token):
         super().__init__(bearer_token)
-        self.columns = ['Time', 'Tweet']
+        self.columns = ['Tweet']
         self.data = []
     
     def on_data(self, data):
         json_data = json.loads(data)
-        self.data.append((json_data['created_at'], json_data['text']))
+        print(json_data)
+        if 'text' in json_data:
+            self.data.append((json_data['text']))
 
     def on_error(self, status):
         print(status)
 
 
 printer = TweetPrinter(bearer_token)
-printer.add_rules(tweepy.StreamRule('#'))
+rule = tweepy.StreamRule("#sports")
+printer.add_rules(rule)
 printer.filter()
 time.sleep(5) 
 printer.disconnect()
