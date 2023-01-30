@@ -2,6 +2,7 @@ import tweepy
 import configparser
 import pandas as pd
 import json
+import random
 
 def read_config(config_file):
     config = configparser.ConfigParser()
@@ -49,10 +50,32 @@ def analyze_tweets(file):
     top_1000_hashtags = sorted_hashtags[:1000]
     return top_1000_hashtags
 
+def select_answer(df, hashtag1, hashtag2):
+    user_choice = input()
+    count1 = df[df['Hashtag'] == hashtag1]['Count'].values[0]
+    count2 = df[df['Hashtag'] == hashtag2]['Count'].values[0]
+    if user_choice == '1':
+        if count1 > count2:
+            print("Correct!")
+            return True
+        else:
+            print(f"Incorrect. {hashtag2} was tweeted more ({count2} vs {count1}).")
+            return False
+    elif user_choice == '2':
+        if count2 > count1:
+            print("Correct!")
+            return True
+        else:
+            print(f"Incorrect. {hashtag1} was tweeted more ({count1} vs {count2}).")
+            return False
+    else:
+         print("Invalid option. Try again.")
+         select_answer(df, hashtag1, hashtag2)
+
 
 def main():
     
-    choice = input("Enter 'S' to stream tweets, 'A' to analyze tweets, or 'V' to view top 1000 hashtags: ")
+    choice = input("Enter 'G' to play the gane, 'S' to stream tweets, 'A' to analyze tweets, or 'V' to view top 1000 hashtags: ")
     if choice == 'S' or choice == 's':
         config = read_config('config.ini')
         stream_tweets(config['bearer_token'])
@@ -63,6 +86,23 @@ def main():
     elif choice == 'V' or choice == 'v':
         df = pd.read_csv('top_1000_hashtags.csv')
         print(df)
+    elif choice == 'G' or choice == 'g':
+        df = pd.read_csv('top_1000_hashtags.csv')
+        used_hashtags = set()  
+        score = 0
+        while True:
+            available_hashtags = set(df['Hashtag']) - used_hashtags
+            if not available_hashtags:
+                print(f"You have used all the hashtags. Your score is {score}")
+                break
+            hashtag1, hashtag2 = random.sample(available_hashtags, 2)
+            used_hashtags.update({hashtag1, hashtag2})
+            print(f"Which of the following hashtags was tweeted more: {hashtag1} or {hashtag2}? Input '1', or '2 to select your answer.")
+            if select_answer(df, hashtag1, hashtag2):
+                score += 1
+            else:
+                break
     else:
         print("Invalid option. Try again.")
+   
 main()
