@@ -96,13 +96,13 @@ def main():
             if not available_hashtags:
                 print(f"You have used all the hashtags. Your score is {score}")
                 break
-            hashtag1, hashtag2 = random.sample(available_hashtags, 2)
+            hashtag1, hashtag2 = random.sample(list(available_hashtags), 2)
             used_hashtags.update({hashtag1, hashtag2})
             if select_answer(df, hashtag1, hashtag2):
                 score += 1
             else:
                 break
-        print("Thanks for playing! Your final score is {score}")
+        print(f"Thanks for playing! Your final score is {score}")
     else:
         print("Invalid option. Try again.")
         main()
