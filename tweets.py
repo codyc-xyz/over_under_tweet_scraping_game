@@ -51,6 +51,7 @@ def analyze_tweets(file):
     return top_1000_hashtags
 
 def select_answer(df, hashtag1, hashtag2):
+    print(f"Which of the following hashtags was tweeted more: {hashtag1} or {hashtag2}? Input '1', or '2 to select your answer.")
     user_choice = input()
     count1 = df[df['Hashtag'] == hashtag1]['Count'].values[0]
     count2 = df[df['Hashtag'] == hashtag2]['Count'].values[0]
@@ -75,7 +76,7 @@ def select_answer(df, hashtag1, hashtag2):
 
 def main():
     
-    choice = input("Enter 'G' to play the gane, 'S' to stream tweets, 'A' to analyze tweets, or 'V' to view top 1000 hashtags: ")
+    choice = input("Enter 'G' to play the game, 'S' to stream tweets, 'A' to analyze tweets, or 'V' to view top 1000 hashtags: ")
     if choice == 'S' or choice == 's':
         config = read_config('config.ini')
         stream_tweets(config['bearer_token'])
@@ -97,12 +98,13 @@ def main():
                 break
             hashtag1, hashtag2 = random.sample(available_hashtags, 2)
             used_hashtags.update({hashtag1, hashtag2})
-            print(f"Which of the following hashtags was tweeted more: {hashtag1} or {hashtag2}? Input '1', or '2 to select your answer.")
             if select_answer(df, hashtag1, hashtag2):
                 score += 1
             else:
                 break
+        print("Thanks for playing! Your final score is {score}")
     else:
         print("Invalid option. Try again.")
+        main()
    
 main()
