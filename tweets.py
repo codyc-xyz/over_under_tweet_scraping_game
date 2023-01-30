@@ -47,6 +47,17 @@ def analyze_tweets(file):
     hashtag_counts = pd.Series(hashtags).value_counts()
     sorted_hashtags = hashtag_counts.sort_values(ascending=False)
     top_1000_hashtags = sorted_hashtags[:1000]
-    print(top_1000_hashtags)
+    return top_1000_hashtags
 
 
+def main():
+    choice = input("Enter 'S' to stream tweets or 'A' to analyze tweets: ")
+    if choice == 'S' or choice == 's':
+        config = read_config('config.ini')
+        stream_tweets(config['bearer_token'])
+    elif choice == 'A' or choice == 'a':
+        top_1000_hashtags = analyze_tweets('tweets.csv')
+        print(top_1000_hashtags)
+    else:
+        print("Invalid option. Try again.")
+main()
