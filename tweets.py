@@ -30,16 +30,14 @@ class TweetPrinter(tweepy.StreamingClient):
             self.data.append((json_data['data']['text']))
 
     def on_error(self, status):
-        print(status)
+        print(status)        
+
+    def on_disconnect(self):
+        df = pd.DataFrame(printer.data, columns=printer.columns)
+        df.to_csv('tweets.csv', index=False)
+        return super().on_disconnect()
 
 
 printer = TweetPrinter(bearer_token)
-
-rule = tweepy.StreamRule("has:hashtag")
-printer.add_rules(rule)
 printer.sample()
-time.sleep(10) 
 printer.disconnect()
-
-df = pd.DataFrame(printer.data, columns=printer.columns)
-df.to_csv('tweets.csv')
