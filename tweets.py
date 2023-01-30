@@ -51,13 +51,19 @@ def analyze_tweets(file):
 
 
 def main():
-    choice = input("Enter 'S' to stream tweets or 'A' to analyze tweets: ")
+    
+    choice = input("Enter 'S' to stream tweets, 'A' to analyze tweets, or 'V' to view top 1000 hashtags: ")
     if choice == 'S' or choice == 's':
         config = read_config('config.ini')
         stream_tweets(config['bearer_token'])
     elif choice == 'A' or choice == 'a':
         top_1000_hashtags = analyze_tweets('tweets.csv')
-        print(top_1000_hashtags)
+        df = pd.DataFrame(top_1000_hashtags, columns=['Hashtag'])
+        df.to_csv('top_1000_hashtags.csv')
+    elif choice == 'V' or choice == 'v':
+        df = pd.read_csv('top_1000_hashtags.csv')
+        for hashtag in df['Hashtag']:
+            print(hashtag)
     else:
         print("Invalid option. Try again.")
 main()
