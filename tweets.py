@@ -58,12 +58,11 @@ def main():
         stream_tweets(config['bearer_token'])
     elif choice == 'A' or choice == 'a':
         top_1000_hashtags = analyze_tweets('tweets.csv')
-        df = pd.DataFrame(top_1000_hashtags, columns=['Hashtag'])
-        df.to_csv('top_1000_hashtags.csv')
+        df = pd.DataFrame({'Hashtag': top_1000_hashtags.index, 'Count': top_1000_hashtags.values})
+        df.to_csv('top_1000_hashtags.csv', index=False)
     elif choice == 'V' or choice == 'v':
         df = pd.read_csv('top_1000_hashtags.csv')
-        for hashtag in df['Hashtag']:
-            print(hashtag)
+        print(df)
     else:
         print("Invalid option. Try again.")
 main()
